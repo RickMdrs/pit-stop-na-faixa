@@ -27,6 +27,12 @@ Tudo roda **localmente**, sem internet e sem gravar vídeo: só os eventos ficam
 - **Privacidade por design:** sem reconhecimento facial, sem gravação de vídeo, servidor só em `127.0.0.1`
 - **Modo história, modo apresentação e tela do pedestre** para demonstrar o sistema sem montar a bancada
 
+## Equipe e minha contribuição
+
+Desenvolvi **todo o software do projeto**: a visão computacional, a máquina de estados, as telas
+(painel do operador, sinal, pedestre, atividade educativa e modo história), o firmware do sinal físico,
+o servidor local e os testes automáticos. O restante da equipe ficou responsável pelo **pitch** e pelo **jogo educativo**.
+
 **Stack:** JavaScript (ES Modules) · Node.js · MediaPipe Tasks Vision · Web Serial API · BroadcastChannel · Arduino/ESP32 (C++) · HTML/CSS
 
 > **MVP de bancada.** Webcam + computador + sinal em tela ou pequeno sinal físico. Veículos **não** são detectados.
