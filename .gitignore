@@ -1,0 +1,6 @@
+node_modules/
+data/
+# gerados por `npm run setup`
+public/vendor/
+public/models/
+.chrome-quiosque/

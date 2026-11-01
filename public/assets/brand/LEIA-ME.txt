@@ -1,0 +1,10 @@
+Coloque aqui o logo OFICIAL do Grupo Equatorial (não recrie nem recolora a marca).
+
+Nomes reconhecidos, em ordem de preferência:
+  equatorial-logo-branco.svg   versão branca/negativa (ideal para o fundo escuro da interface)
+  equatorial-logo-branco.png
+  equatorial-logo.svg          versão colorida (aparece sobre uma placa branca)
+  equatorial-logo.png
+
+Sem nenhum desses arquivos, a interface mostra apenas o nome "Equatorial" em texto.
+Use somente com autorização e conforme o manual de marca da empresa.

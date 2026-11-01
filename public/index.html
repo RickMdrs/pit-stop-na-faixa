@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Pit Stop na Faixa — Painel</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Pit Stop na Faixa — Grupo Equatorial">
+      <span data-brand-logo></span>
+      <span class="wordmark" data-brand-wordmark hidden>Equatorial</span>
+      <span class="divider" aria-hidden="true"></span>
+      <span class="product">Pit Stop na Faixa</span>
+    </a>
+
+    <nav class="topnav" aria-label="Telas">
+      <a class="navlink active" href="./" aria-current="page">Painel</a>
+      <a class="navlink" href="historia.html" target="_blank">Como funciona <svg class="i i-sm"><use href="vendor/icons.svg#arrow-up-right"/></svg></a>
+      <a class="navlink" href="sinal.html" target="pitstop-sinal">Sinal ao motorista <svg class="i i-sm"><use href="vendor/icons.svg#arrow-up-right"/></svg></a>
+      <a class="navlink" href="pedestre.html" target="pitstop-pedestre" title="Orientação ao pedestre (opcional)">Tela do pedestre <svg class="i i-sm"><use href="vendor/icons.svg#arrow-up-right"/></svg></a>
+      <a class="navlink" href="educacao.html" target="_blank">Atividade educativa <svg class="i i-sm"><use href="vendor/icons.svg#arrow-up-right"/></svg></a>
+    </nav>
+
+    <div class="topbar-right">
+      <span id="origemBadge" class="tag badge-origem" title="Origem dos dados registrada em cada evento">—</span>
+      <span id="estadoChip" class="tag chip" role="status" aria-live="polite">—</span>
+      <button id="btnDemo" class="btn btn-brand" title="Tela para a plateia (Esc para sair)">
+        <svg class="i"><use href="vendor/icons.svg#presentation"/></svg> Modo apresentação
+      </button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- ================= coluna principal: câmera e controles ================= -->
+    <section class="col-main">
+      <div class="stage-head">
+        <div class="stage-title">
+          <span class="label">Câmera · zonas de detecção</span>
+          <div class="legend" aria-label="Legenda das zonas">
+            <span class="lg lg-a">A · aproximação</span>
+            <span class="lg lg-b">B · espera</span>
+            <span class="lg lg-c">C · faixa</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage" id="stage">
+        <video id="video" playsinline muted></video>
+        <canvas id="photo" class="photo" hidden></canvas>
+        <canvas id="overlay"></canvas>
+        <div id="stageMsg" class="stage-msg">
+          <svg class="i i-xl"><use href="vendor/icons.svg#scan-eye"/></svg>
+          <span>Escolha a fonte e clique em <b>Iniciar</b></span>
+        </div>
+        <span class="corner tl" aria-hidden="true"></span><span class="corner tr" aria-hidden="true"></span>
+        <span class="corner bl" aria-hidden="true"></span><span class="corner br" aria-hidden="true"></span>
+      </div>
+
+      <div id="photoBar" class="photo-bar" hidden>
+        <button id="photoPrev" class="btn btn-ghost" aria-label="Foto anterior"><svg class="i" style="transform:rotate(180deg)"><use href="vendor/icons.svg#chevron-right"/></svg></button>
+        <div id="photoThumbs" class="thumbs" role="group" aria-label="Fotos carregadas"></div>
+        <button id="photoNext" class="btn btn-ghost" aria-label="Próxima foto"><svg class="i"><use href="vendor/icons.svg#chevron-right"/></svg></button>
+        <div class="photo-meta"><span class="label" id="photoCount"></span><span class="dim small" id="photoName"></span></div>
+        <span class="dim small photo-hint">Teclas <kbd>←</kbd> <kbd>→</kbd> trocam a foto</span>
+      </div>
+
+      <div class="controls" role="group" aria-label="Fonte de imagem">
+        <label class="field">
+          <span class="label">Fonte</span>
+          <select id="origem">
+            <option value="webcam_bancada">Webcam — real de bancada</option>
+            <option value="video_teste">Vídeo de teste — arquivo</option>
+            <option value="foto_teste">Foto — imagens do celular</option>
+            <option value="simulacao">Simulação — eventos sintéticos</option>
+          </select>
+        </label>
+        <label class="field" id="camWrap">
+          <span class="label">Câmera</span>
+          <select id="camera"><option value="">Padrão do sistema</option></select>
+        </label>
+        <label class="field" id="fileWrap" hidden>
+          <span class="label">Arquivo de vídeo</span>
+          <input type="file" id="videoFile" accept="video/*">
+        </label>
+        <label class="field" id="photoWrap" hidden>
+          <span class="label">Fotos (JPG/PNG, várias de uma vez)</span>
+          <input type="file" id="photoFiles" accept="image/*" multiple>
+        </label>
+        <div class="controls-cta">
+          <button id="btnStop" class="btn btn-ghost">Parar</button>
+          <button id="btnStart" class="btn-round" aria-label="Iniciar">Iniciar</button>
+        </div>
+      </div>
+
+      <fieldset id="simPanel" class="sim" hidden>
+        <legend class="label">Simulação — o que a câmera "estaria vendo"</legend>
+        <label class="check"><input type="checkbox" id="simA"> Pessoa em A</label>
+        <label class="check"><input type="checkbox" id="simB"> Pessoa em B</label>
+        <label class="check"><input type="checkbox" id="simC"> Pessoa em C</label>
+        <label class="check"><input type="checkbox" id="simGB"> Gesto em B</label>
+        <label class="check"><input type="checkbox" id="simGO"> Gesto fora de B</label>
+        <label class="check"><input type="checkbox" id="simFreeze"> Congelar imagem</label>
+      </fieldset>
+
+      <div class="actions">
+        <button id="btnButton" class="btn btn-lg btn-request" title="Atalho: tecla B">
+          <svg class="i"><use href="vendor/icons.svg#hand"/></svg> Solicitar travessia <kbd>B</kbd>
+        </button>
+        <div class="override">
+          <span class="label">Sinal</span>
+          <div class="seg-group" role="group" aria-label="Controle manual do sinal">
+            <button data-override="auto" class="seg active">Automático</button>
+            <button data-override="on" class="seg">Forçar ligado</button>
+            <button data-override="off" class="seg">Forçar desligado</button>
+          </div>
+        </div>
+        <div class="actions-end">
+          <button id="btnReset" class="btn btn-ghost"><svg class="i"><use href="vendor/icons.svg#rotate-ccw"/></svg> Reiniciar após falha</button>
+          <button id="btnMoved" class="btn btn-ghost" title="Use quando a câmera mudar de posição"><svg class="i"><use href="vendor/icons.svg#move"/></svg> Câmera foi movida</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= modo apresentação ================= -->
+    <aside id="demoPanel" class="demo-panel card" hidden>
+      <div class="demo-head">
+        <span id="demoOrigem" class="tag badge-origem">—</span>
+        <div class="seg-group" role="group" aria-label="Como o pedestre pede passagem">
+          <button id="demoModeGesto" class="seg"><svg class="i i-sm"><use href="vendor/icons.svg#hand"/></svg> Gesto</button>
+          <button id="demoModePres" class="seg"><svg class="i i-sm"><use href="vendor/icons.svg#person-standing"/></svg> Presença</button>
+        </div>
+        <button id="btnDemoExit" class="btn btn-ghost">Sair <kbd>Esc</kbd></button>
+      </div>
+
+      <ol class="steps" aria-live="polite">
+        <li id="st1"><span class="dot"><svg class="i i-sm"><use href="vendor/icons.svg#scan-eye"/></svg></span><div><b>Pessoa detectada</b><small></small></div></li>
+        <li id="st2"><span class="dot"><svg class="i i-sm"><use href="vendor/icons.svg#map-pin"/></svg></span><div><b>Na área de espera</b><small></small></div></li>
+        <li id="st3"><span class="dot"><svg class="i i-sm"><use href="vendor/icons.svg#hand"/></svg></span><div><b>Braço levantado</b><small></small><div class="bar"><i></i></div></div></li>
+        <li id="st4"><span class="dot"><svg class="i i-sm"><use href="vendor/icons.svg#radio"/></svg></span><div><b>Pedido de travessia registrado</b><small></small></div></li>
+        <li id="st5"><span class="dot"><svg class="i i-sm"><use href="vendor/icons.svg#car-front"/></svg></span><div><b>Motoristas avisados</b><small></small></div></li>
+      </ol>
+      <p id="demoStatus" class="demo-status"></p>
+
+      <div class="demo-views">
+        <figure>
+          <figcaption class="label">Motorista vê</figcaption>
+          <div id="demoSignal" class="signal-preview off">
+            <svg viewBox="0 0 64 64" aria-hidden="true" class="ped-icon"><use href="#ped"></use></svg>
+            <span id="demoSignalText">INATIVO</span>
+          </div>
+        </figure>
+        <figure id="demoPedFig">
+          <figcaption class="label">Pedestre vê</figcaption>
+          <div id="demoPed" class="ped-preview">
+            <strong id="demoPedTitulo">—</strong>
+            <span id="demoPedOrient"></span>
+          </div>
+        </figure>
+      </div>
+      <p class="dim small demo-foot">O sinal avisa o motorista. A travessia acontece quando os veículos param — quem confirma é o pedestre.</p>
+    </aside>
+
+    <!-- ================= coluna lateral ================= -->
+    <aside class="col-side card">
+      <section class="card-sec">
+        <span class="label">Estado do sistema</span>
+        <h1 id="stateTitle" class="state-title">—</h1>
+        <p id="stateSub" class="muted state-sub"></p>
+      </section>
+
+      <section class="card-sec">
+        <div class="sec-head"><span class="label">Sinal ao motorista</span></div>
+        <div id="signalPreview" class="signal-preview off" aria-live="polite">
+          <svg viewBox="0 0 64 64" aria-hidden="true" class="ped-icon"><use href="#ped"></use></svg>
+          <span id="signalText">INATIVO</span>
+        </div>
+        <div class="row-2">
+          <label class="field">
+            <span class="label">Saída</span>
+            <select id="saida">
+              <option value="tela">Sinal em tela (contingência)</option>
+              <option value="serial">Sinal físico (USB serial)</option>
+            </select>
+          </label>
+          <button id="btnSerial" class="btn"><svg class="i"><use href="vendor/icons.svg#usb"/></svg> Conectar</button>
+        </div>
+      </section>
+
+      <section class="card-sec">
+        <div class="sec-head"><span class="label">Diagnóstico</span></div>
+        <dl class="diag" id="diag">
+          <div><dt><svg class="i i-sm"><use href="vendor/icons.svg#camera"/></svg>Câmera</dt><dd id="dCam">—</dd></div>
+          <div><dt><svg class="i i-sm"><use href="vendor/icons.svg#cpu"/></svg>Modelo</dt><dd id="dModel">—</dd></div>
+          <div><dt><svg class="i i-sm"><use href="vendor/icons.svg#users"/></svg>Pessoas</dt><dd id="dPeople">—</dd></div>
+          <div><dt><svg class="i i-sm"><use href="vendor/icons.svg#square-dashed"/></svg>Zonas</dt><dd id="dZones">—</dd></div>
+          <div><dt><svg class="i i-sm"><use href="vendor/icons.svg#radio"/></svg>Saída</dt><dd id="dSignal">—</dd></div>
+          <div><dt><svg class="i i-sm"><use href="vendor/icons.svg#monitor"/></svg>Pedestre</dt><dd id="dPed">—</dd></div>
+          <div><dt><svg class="i i-sm"><use href="vendor/icons.svg#shield-check"/></svg>Autonomia</dt><dd id="dAuto">—</dd></div>
+          <div><dt><svg class="i i-sm"><use href="vendor/icons.svg#database"/></svg>Registro</dt><dd id="dLog">—</dd></div>
+          <div><dt><svg class="i i-sm"><use href="vendor/icons.svg#wifi-off"/></svg>Rede</dt><dd id="dNet">—</dd></div>
+          <div><dt><svg class="i i-sm"><use href="vendor/icons.svg#settings-2"/></svg>Config.</dt><dd id="dCfg">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="card-sec">
+        <div class="sec-head">
+          <span class="label">Métricas da sessão</span>
+          <a class="link small" href="/api/events.csv"><svg class="i i-sm"><use href="vendor/icons.svg#file-down"/></svg> CSV</a>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><span class="kpi-v" id="mAct">0</span><span class="label">Ativações</span></div>
+          <div class="kpi"><span class="kpi-v" id="mFail">0</span><span class="label">Falhas</span></div>
+          <div class="kpi"><span class="kpi-v" id="mOut">0</span><span class="label">Gestos fora</span></div>
+        </div>
+        <dl class="diag compact">
+          <div><dt>Por motivo</dt><dd id="mWhy">—</dd></div>
+          <div><dt>Latência</dt><dd id="mLat">—</dd></div>
+          <div><dt>Válidas / falsas</dt><dd id="mAnn">0 / 0</dd></div>
+        </dl>
+        <p class="dim small">Latência = condição observada → sinal confirmado (inclui o tempo de confirmação). Vale só para as condições deste ensaio.</p>
+      </section>
+    </aside>
+
+    <!-- ================= configuração ================= -->
+    <details class="panel col-full" id="zonesPanel">
+      <summary>
+        <svg class="i"><use href="vendor/icons.svg#sliders-horizontal"/></svg>
+        <span>Zonas e configuração</span>
+        <span class="dim small">desenhar zonas, regras, modelo e tempos</span>
+        <svg class="i chev"><use href="vendor/icons.svg#chevron-right"/></svg>
+      </summary>
+      <div class="zone-editor">
+        <div class="zone-tools">
+          <div class="seg-group" role="group" aria-label="Desenhar zona">
+            <button data-zone="A" class="seg zone-btn zA"><i class="sw sw-a"></i>Desenhar A</button>
+            <button data-zone="B" class="seg zone-btn zB"><i class="sw sw-b"></i>Desenhar B</button>
+            <button data-zone="C" class="seg zone-btn zC"><i class="sw sw-c"></i>Desenhar C</button>
+          </div>
+          <button id="btnZoneUndo" class="btn btn-ghost"><svg class="i"><use href="vendor/icons.svg#undo-2"/></svg> Desfazer ponto</button>
+          <button id="btnZoneDone" class="btn"><svg class="i"><use href="vendor/icons.svg#check"/></svg> Concluir zona</button>
+          <button id="btnZoneDefault" class="btn btn-ghost">Restaurar padrão</button>
+          <p class="dim small zone-help">Escolha a zona, clique na imagem para marcar os vértices (mín. 3) e conclua.</p>
+        </div>
+
+        <div class="cfg-cols">
+          <fieldset class="cfg-group">
+            <legend class="label">Regras</legend>
+            <label class="check"><input type="checkbox" id="cfgPresenca"> Presença em B abre solicitação</label>
+            <label class="check"><input type="checkbox" id="cfgGesto"> Gesto habilitado</label>
+            <label class="check"><input type="checkbox" id="cfgPre"> Pré-alerta na aproximação (A)</label>
+            <label class="check"><input type="checkbox" id="cfgAuto"> Recuperar falhas automaticamente</label>
+            <label class="check"><input type="checkbox" id="cfgPed"> Tela do pedestre (opcional)</label>
+          </fieldset>
+          <fieldset class="cfg-group">
+            <legend class="label">Detecção</legend>
+            <label class="field"><span class="label">Modelo de pose</span>
+              <select id="cfgModelo">
+                <option value="lite">lite — mais rápido</option>
+                <option value="full">full — equilíbrio</option>
+                <option value="heavy">heavy — mais preciso, lento</option>
+              </select>
+            </label>
+            <label class="field"><span class="label">Ponto de referência</span>
+              <select id="cfgRef">
+                <option value="auto">auto (pés → quadril → centro)</option>
+                <option value="pes">pés</option>
+                <option value="quadril">quadril</option>
+                <option value="centro">centro do corpo</option>
+              </select>
+            </label>
+            <div class="row-2">
+              <label class="field"><span class="label">Confiança</span><input type="number" id="cfgConf" min="0.1" max="0.9" step="0.05"></label>
+              <label class="field"><span class="label">Máx. pessoas</span><input type="number" id="cfgMaxP" min="1" max="6" step="1"></label>
+            </div>
+            <div class="row-2">
+              <label class="field"><span class="label">Suavização</span><input type="number" id="cfgSuav" min="0" max="0.9" step="0.1"></label>
+              <label class="field"><span class="label">Retenção (ms)</span><input type="number" id="cfgRet" min="0" step="50"></label>
+            </div>
+          </fieldset>
+          <fieldset class="cfg-group">
+            <legend class="label">Tempos (ms)</legend>
+            <div class="row-2">
+              <label class="field"><span class="label">Confirm. presença</span><input type="number" id="cfgConfPres" min="0" step="50"></label>
+              <label class="field"><span class="label">Confirm. gesto</span><input type="number" id="cfgConfGesto" min="0" step="50"></label>
+            </div>
+            <div class="row-2">
+              <label class="field"><span class="label">Tolerância a perda</span><input type="number" id="cfgTol" min="0" step="50"></label>
+              <label class="field"><span class="label">Verif. liberação</span><input type="number" id="cfgVerif" min="0" step="100"></label>
+            </div>
+            <div class="row-2">
+              <label class="field"><span class="label">Advertência mín.</span><input type="number" id="cfgMin" min="0" step="500"></label>
+              <label class="field"><span class="label">Advertência máx.</span><input type="number" id="cfgMax" min="1000" step="1000"></label>
+            </div>
+          </fieldset>
+          <fieldset class="cfg-group">
+            <legend class="label">Textos</legend>
+            <label class="field"><span class="label">Sinal — pedido de passagem</span><input type="text" id="cfgTexto" maxlength="40"></label>
+            <label class="field"><span class="label">Sinal — pessoa na faixa</span><input type="text" id="cfgTextoFaixa" maxlength="40"></label>
+            <label class="field"><span class="label">Tela do pedestre</span><input type="text" id="cfgPedTexto" maxlength="60"></label>
+          </fieldset>
+        </div>
+
+        <div class="cfg-foot">
+          <span id="cfgMsg" class="muted small" role="status"></span>
+          <button id="btnSaveCfg" class="btn btn-primary"><svg class="i"><use href="vendor/icons.svg#save"/></svg> Salvar e aplicar</button>
+        </div>
+      </div>
+    </details>
+
+    <!-- ================= eventos ================= -->
+    <section class="panel col-full events-panel">
+      <div class="sec-head">
+        <span class="label"><svg class="i i-sm"><use href="vendor/icons.svg#history"/></svg> Eventos</span>
+        <span class="dim small mono">sessão <span id="sessId"></span></span>
+      </div>
+      <div class="table-wrap">
+        <table id="events">
+          <thead><tr><th>Horário</th><th>Origem</th><th>Tipo</th><th>Detalhe</th><th>Revisão</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- pictograma de pedestre do SINAL (estilo placa de trânsito; não é ícone de interface) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="ped" viewBox="0 0 64 64">
+      <circle cx="34" cy="10" r="6" fill="currentColor"/>
+      <path d="M30 19h8l6 14-5 2-4-8-2 10 8 10v15h-6V49l-7-8-3 9-8 12-5-3 8-12 4-14 1-9-5 4v8h-5V24z" fill="currentColor"/>
+    </symbol>
+  </svg>
+
+  <script type="module" src="js/brand.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

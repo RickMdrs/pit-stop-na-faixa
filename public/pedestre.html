@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Pit Stop na Faixa — Pedestre</title>
+  <link rel="stylesheet" href="css/base.css">
+  <style>
+    /* Orientação ao pedestre. Sem verde e sem bonequinho de semáforo: não é sinal de "siga". */
+    html, body { height: 100%; }
+    body {
+      background:
+        linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 100% 33.33%,
+        linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 33.33% 100%,
+        var(--bg);
+      transition: background-color var(--t-med) var(--ease);
+      overflow: hidden;
+    }
+    .wrap { height: 100%; display: grid; grid-template-rows: auto 1fr auto; }
+    .top, .footer { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); padding: var(--s-4) var(--s-6); }
+    .footer { color: var(--text-3); font-size: 12px; }
+    .main { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3.2vh; padding: 2vh 6vw; text-align: center; }
+
+    .phase { display: inline-flex; align-items: center; gap: 8px; }
+    .icon {
+      width: 14vmin; height: 14vmin; min-width: 72px; min-height: 72px; border-radius: 50%;
+      display: grid; place-items: center; border: 1px solid var(--line-2); color: var(--text);
+      transition: background var(--t-med) var(--ease), color var(--t-med) var(--ease), border-color var(--t-med) var(--ease);
+    }
+    .icon svg { width: 46%; height: 46%; fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+    h1 { font-size: clamp(30px, 6.4vmin, 84px); line-height: 1.06; font-weight: 300; letter-spacing: -0.035em; max-width: 20ch; }
+    p.sub { font-size: clamp(16px, 2.8vmin, 34px); line-height: 1.35; color: var(--text-2); max-width: 32ch; }
+
+    .passos { list-style: none; margin: 1vh 0 0; padding: 0; display: grid; gap: 1.4vh; width: min(90vw, 880px); counter-reset: n; }
+    .passos li {
+      display: flex; align-items: center; gap: 2.6vmin; padding: 1.8vh 2.8vmin; text-align: left;
+      border: 1px solid var(--line-2); border-radius: var(--r-lg); background: rgba(255, 255, 255, 0.02);
+      font-size: clamp(16px, 3.2vmin, 40px); font-weight: 400; letter-spacing: -0.01em;
+    }
+    .passos .n { font-size: 0.55em; font-weight: 500; color: var(--text-3); letter-spacing: 0.1em; min-width: 2.2em; }
+    .passos .ic { width: 1.25em; height: 1.25em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; color: var(--text-2); }
+
+    .bar { width: min(70vw, 640px); height: 6px; border-radius: 3px; background: var(--line-2); overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 0; background: var(--brand-2); transition: width 160ms linear; }
+
+    /* pedido aceito: azul da marca */
+    body.confirmado, body.recebido, body.atravessando { background-color: var(--brand); }
+    body.confirmado .icon, body.recebido .icon, body.atravessando .icon { background: #fff; color: var(--brand); border-color: #fff; }
+    body.confirmado p.sub, body.recebido p.sub, body.atravessando p.sub { color: #dbe6fb; }
+    body.confirmado h1 { font-weight: 400; }
+    body.recebido h1 { font-weight: 600; letter-spacing: -0.02em; text-transform: uppercase; font-size: clamp(26px, 5.4vmin, 72px); max-width: 22ch; }
+    body.recebido .passos li { border-color: rgba(255, 255, 255, 0.28); background: rgba(255, 255, 255, 0.07); }
+    body.recebido .passos .ic, body.recebido .passos .n { color: #dbe6fb; }
+    body.recebido .icon { width: 10vmin; height: 10vmin; }
+    body.confirmado .footer, body.recebido .footer, body.atravessando .footer, body.recebido .top, body.confirmado .top, body.atravessando .top { color: #c7d6f5; }
+    /* pessoa chegando / na área / segurando */
+    body.na_area .icon, body.segurando .icon, body.chegando .icon { border-color: var(--brand-2); color: var(--brand-2); }
+    /* falha / sem contato */
+    body.falha, body.sem-contato { background: repeating-linear-gradient(45deg, #101215 0 24px, #0a0b0d 24px 48px); }
+    body.falha .icon, body.sem-contato .icon { color: var(--amber); border-color: rgba(245, 165, 36, 0.5); }
+    body.desativado { color: var(--text-3); }
+    .fs { min-height: 32px; }
+  </style>
+</head>
+<body class="instrucao">
+  <div class="wrap">
+    <div class="top">
+      <span class="brand">
+        <span data-brand-logo></span>
+        <span class="wordmark" data-brand-wordmark hidden>Equatorial</span>
+        <span class="divider" aria-hidden="true"></span>
+        <span class="product">Pit Stop na Faixa</span>
+      </span>
+      <span class="label" id="status">aguardando painel…</span>
+    </div>
+
+    <main class="main" aria-live="polite">
+      <div class="icon" aria-hidden="true"><svg><use id="iconUse" href="vendor/icons.svg#person-standing"/></svg></div>
+      <h1 id="titulo">Aguardando o sistema…</h1>
+      <p class="sub" id="orientacao">Olhe antes de atravessar.</p>
+      <div class="bar" id="bar" hidden><i id="barFill"></i></div>
+      <ol class="passos" id="passos" hidden></ol>
+    </main>
+
+    <div class="footer">
+      <span>Orientação ao pedestre · não autoriza a travessia</span>
+      <button class="btn btn-ghost fs" id="fs"><svg class="i i-sm"><use href="vendor/icons.svg#maximize"/></svg> Tela cheia</button>
+    </div>
+  </div>
+  <script type="module" src="js/brand.js"></script>
+  <script>
+    const ICON_POR_MODO = {
+      instrucao: 'person-standing', chegando: 'map-pin', na_area: 'hand', segurando: 'hand',
+      confirmado: 'circle-check', recebido: 'eye', atravessando: 'footprints',
+      falha: 'triangle-alert', 'sem-contato': 'wifi-off', desativado: 'circle-x',
+    };
+    const janela = Math.random().toString(36).slice(2, 10);
+    const bc = new BroadcastChannel('pitstop-pedestre');
+    const $ = (id) => document.getElementById(id);
+    let lastContact = 0;
+    let lastKey = null;
+
+    function svgIcon(name, cls) {
+      const ns = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(ns, 'svg');
+      svg.setAttribute('class', cls);
+      svg.setAttribute('aria-hidden', 'true');
+      const use = document.createElementNS(ns, 'use');
+      use.setAttribute('href', 'vendor/icons.svg#' + name);
+      svg.append(use);
+      return svg;
+    }
+
+    function show(v) {
+      const key = v.modo + '|' + v.titulo;
+      if (key !== lastKey) {
+        lastKey = key;
+        document.body.className = v.modo;
+        $('iconUse').setAttribute('href', 'vendor/icons.svg#' + (ICON_POR_MODO[v.modo] || 'person-standing'));
+        $('titulo').textContent = v.titulo;
+        $('orientacao').textContent = v.orientacao;
+        const ol = $('passos');
+        ol.replaceChildren();
+        (v.passos || []).forEach((p, i) => {
+          const li = document.createElement('li');
+          const n = document.createElement('span');
+          n.className = 'n';
+          n.textContent = String(i + 1).padStart(2, '0');
+          const t = document.createElement('span');
+          t.textContent = p.texto;
+          li.append(n, svgIcon(p.icone, 'ic'), t);
+          ol.append(li);
+        });
+        ol.hidden = !(v.passos && v.passos.length);
+      }
+      $('bar').hidden = !v.progresso;
+      $('barFill').style.width = Math.round((v.progresso || 0) * 100) + '%';
+    }
+
+    bc.onmessage = (ev) => {
+      const msg = ev.data;
+      if (!msg || msg.tipo !== 'estado' || !msg.view) return;
+      lastContact = performance.now();
+      show(msg.view);
+      bc.postMessage({ tipo: 'ack', janela });
+    };
+    bc.postMessage({ tipo: 'ola', janela });
+
+    setInterval(() => {
+      const lost = performance.now() - lastContact > 2000;
+      if (lost) show({ modo: 'sem-contato', titulo: 'Sistema indisponível', orientacao: 'Olhe com atenção antes de atravessar.' });
+      $('status').textContent = lost ? 'sem contato com o painel' : 'conectado';
+    }, 250);
+
+    $('fs').onclick = () => document.documentElement.requestFullscreen?.();
+  </script>
+</body>
+</html>

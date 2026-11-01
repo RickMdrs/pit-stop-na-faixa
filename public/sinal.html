@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Pit Stop na Faixa — Sinal</title>
+  <link rel="stylesheet" href="css/base.css">
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #000; color: #e5e7eb; font-family: var(--font); }
+    .wrap { height: 100%; display: grid; grid-template-rows: 1fr auto; }
+    .sign { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3vh; padding: 4vh; }
+    .lamps { display: flex; gap: 6vw; }
+    .lamp { width: 22vmin; height: 12vmin; border-radius: 2vmin; background: #2a2207; border: 0.6vmin solid #3b3210; }
+    .plate { display: flex; align-items: center; gap: 3vmin; padding: 3vmin 5vmin; border-radius: 3vmin; border: 0.8vmin solid #333; color: #555; }
+    .plate svg { width: 18vmin; height: 18vmin; }
+    .plate .txt { display: flex; flex-direction: column; gap: 1vmin; text-align: left; }
+    .plate #texto { font-size: 6.4vmin; font-weight: 700; letter-spacing: -0.01em; line-height: 1.05; }
+    .plate #sub { font-size: 4.6vmin; font-weight: 600; letter-spacing: 0.01em; opacity: 0.92; }
+    body.on .plate { border-color: #fbbf24; color: #fbbf24; }
+    /* Piscar alternado (wig-wag), padrão de advertência — não é semáforo. */
+    body.on .lamp { animation: flash 0.9s steps(1) infinite; }
+    body.on .lamp:last-child { animation-delay: 0.45s; }
+    /* Nível 2 — pessoa NA FAIXA: alerta máximo. Pisca rápido, alternando vermelho e âmbar. */
+    body.on.n2 .lamp { animation: flash2 0.4s steps(1) infinite; }
+    body.on.n2 .lamp:last-child { animation-delay: 0.2s; }
+    body.on.n2 .plate { border-color: #ef4444; color: #fff; animation: plate2 0.4s steps(1) infinite; }
+    body.on.n2 .sign { background: radial-gradient(circle at center, #3f0d0d 0%, #000 70%); }
+    @keyframes flash2 { 0% { background: #ef4444; border-color: #fecaca; box-shadow: 0 0 8vmin #dc2626; } 50% { background: #fbbf24; border-color: #fde68a; box-shadow: 0 0 6vmin #f59e0b; } }
+    @keyframes plate2 { 0% { background: #b91c1c; } 50% { background: #000; } }
+    @keyframes flash { 0% { background: #fbbf24; border-color: #fde68a; box-shadow: 0 0 6vmin #f59e0b; } 50% { background: #2a2207; border-color: #3b3210; box-shadow: none; } }
+    .footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 24px; font-size: 12px; color: var(--text-3); border-top: 1px solid var(--line); }
+    body.lost .sign { background: repeating-linear-gradient(45deg, #111 0 20px, #1a1a1a 20px 40px); }
+    body.lost .plate span::after { content: ''; }
+    .lostmsg { display: none; font-size: 4vmin; color: #9ca3af; font-weight: 700; }
+    body.lost .lostmsg { display: block; }
+    .fs { background: none; border: 1px solid var(--line-2); color: var(--text-2); border-radius: 999px; padding: 6px 12px; cursor: pointer; font: 500 12px var(--font); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="sign" role="img" aria-live="assertive" id="sign" aria-label="Sinal inativo">
+      <div class="lamps"><div class="lamp"></div><div class="lamp"></div></div>
+      <div class="plate">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <circle cx="34" cy="10" r="6" fill="currentColor"/>
+          <path d="M30 19h8l6 14-5 2-4-8-2 10 8 10v15h-6V49l-7-8-3 9-8 12-5-3 8-12 4-14 1-9-5 4v8h-5V24z" fill="currentColor"/>
+        </svg>
+        <span class="txt"><span id="texto">PEDESTRE PEDIU PASSAGEM</span><small id="sub">PARE ANTES DA FAIXA</small></span>
+      </div>
+      <div class="lostmsg">SEM COMUNICAÇÃO COM O PAINEL</div>
+    </div>
+    <div class="footer">
+      <span>Sinal em tela · contingência de bancada (não é o sinal físico)</span>
+      <span id="status">aguardando painel…</span>
+      <button class="fs" id="fs">Tela cheia</button>
+    </div>
+  </div>
+  <script>
+    const janela = Math.random().toString(36).slice(2, 10);
+    const bc = new BroadcastChannel('pitstop-sinal');
+    let lastContact = 0;
+    let on = false;
+
+    let nivel = 0;
+    function render(m) {
+      on = !!m.valor;
+      nivel = m.nivel ?? (on ? 1 : 0);
+      if (m.texto && on) {
+        const [titulo, ...resto] = m.texto.split(/\s+—\s+/);
+        document.getElementById('texto').textContent = titulo;
+        document.getElementById('sub').textContent = resto.join(' — ');
+      }
+      document.body.classList.toggle('on', on);
+      document.body.classList.toggle('n2', nivel === 2);
+      document.getElementById('sign').setAttribute('aria-label', on ? 'Sinal ativo: ' + document.getElementById('texto').textContent : 'Sinal inativo');
+    }
+
+    bc.onmessage = (ev) => {
+      const m = ev.data;
+      if (!m || typeof m !== 'object') return;
+      lastContact = performance.now();
+      if (m.tipo === 'cmd') {
+        render(m);
+        // confirma após aplicar o estado (sem rAF: janela em segundo plano não pintaria e nunca confirmaria)
+        bc.postMessage({ tipo: 'ack', id: m.id, janela });
+      } else if (m.tipo === 'estado') {
+        if (!!m.valor !== on || (m.nivel ?? 0) !== nivel) render(m);
+        bc.postMessage({ tipo: 'ack', id: null, janela });
+      }
+    };
+    bc.postMessage({ tipo: 'ola', janela });
+
+    setInterval(() => {
+      const lost = performance.now() - lastContact > 2000;
+      document.body.classList.toggle('lost', lost);
+      document.getElementById('status').textContent = lost ? 'sem contato com o painel' : (nivel === 2 ? 'ALERTA MÁXIMO' : on ? 'ATIVO' : 'inativo') + ' · conectado ao painel';
+    }, 250);
+
+    document.getElementById('fs').onclick = () => document.documentElement.requestFullscreen?.();
+  </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Pit Stop na Faixa — Como funciona</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/historia.css">
+</head>
+<body>
+  <header class="h-top">
+    <span class="brand">
+      <span data-brand-logo></span>
+      <span class="wordmark" data-brand-wordmark hidden>Equatorial</span>
+      <span class="divider" aria-hidden="true"></span>
+      <span class="product">Pit Stop na Faixa · Como funciona</span>
+    </span>
+    <span class="tag tag-sim" title="Cena roteirizada; decisões calculadas pelo código real do sistema">Simulação ilustrativa</span>
+  </header>
+
+  <main class="h-main">
+    <!-- legenda do capítulo -->
+    <section class="caption" aria-live="polite">
+      <span class="cap-n" id="capN">01</span>
+      <div>
+        <h1 id="capTitulo">—</h1>
+        <p id="capTexto" class="muted"></p>
+      </div>
+    </section>
+
+    <!-- cena vista de cima -->
+    <section class="scene-wrap">
+      <div id="sceneHost" class="scene-host" role="img" aria-label="Vista de cima da saída do corredor: corredor entre prédios, área de espera pintada, faixa de pedestres, via de mão dupla com dois sinais e câmera no prédio da frente"></div>
+          </g>
+        </g>
+      </svg>
+
+      <div class="scene-foot">
+        <div class="decision">
+          <span class="label">Decisão do sistema</span>
+          <span id="estado" class="tag">—</span>
+        </div>
+        <ol id="log" class="log" aria-label="Últimos eventos registrados"></ol>
+      </div>
+    </section>
+
+    <!-- o que cada um vê -->
+    <aside class="views">
+      <figure class="view">
+        <figcaption class="label"><svg class="i i-sm"><use href="vendor/icons.svg#car-front"/></svg> O motorista vê</figcaption>
+        <div id="sign" class="sign">
+          <div class="sign-lamps"><i></i><i></i></div>
+          <div class="sign-plate">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#pp"/></svg>
+            <div class="sign-txt"><b id="signT">INATIVO</b><small id="signS"></small></div>
+          </div>
+        </div>
+      </figure>
+      <figure class="view">
+        <figcaption class="label"><svg class="i i-sm"><use href="vendor/icons.svg#person-standing"/></svg> O pedestre vê</figcaption>
+        <div id="ped" class="ped">
+          <strong id="pedT">—</strong>
+          <span id="pedO" class="muted"></span>
+          <div class="ped-bar" id="pedBar" hidden><i id="pedBarFill"></i></div>
+          <ol id="pedPassos" class="ped-passos" hidden></ol>
+        </div>
+      </figure>
+    </aside>
+
+    <!-- controles -->
+    <section class="controls" aria-label="Controles da história">
+      <div class="btns">
+        <button id="bPrev" class="btn btn-ghost" aria-label="Passo anterior"><svg class="i"><use href="vendor/icons.svg#chevron-right"/></svg></button>
+        <button id="bPlay" class="btn-round" aria-label="Reproduzir">Play</button>
+        <button id="bNext" class="btn btn-ghost" aria-label="Próximo passo"><svg class="i"><use href="vendor/icons.svg#chevron-right"/></svg></button>
+      </div>
+      <div class="timeline">
+        <div class="track" id="track"><i id="fill"></i></div>
+        <ol class="chapters" id="chapters"></ol>
+      </div>
+      <div class="opts">
+        <label class="check"><input type="checkbox" id="oPausa" checked> Pausar a cada passo</label>
+        <label class="check"><input type="checkbox" id="oZonas" checked> Mostrar zonas</label>
+        <button id="bRestart" class="btn btn-ghost"><svg class="i"><use href="vendor/icons.svg#rotate-ccw"/></svg> Reiniciar</button>
+      </div>
+    </section>
+
+    <p class="disclaimer dim small">
+      Animação ilustrativa. A pessoa e o carro seguem um roteiro; o estado, o sinal ao motorista e a tela do pedestre são
+      calculados pelo <b>mesmo código de decisão do sistema real</b>, a partir do que a câmera veria. O sistema não detecta
+      veículos — a parada do carro é a resposta do motorista. Teclas: <kbd>←</kbd> <kbd>→</kbd> <kbd>espaço</kbd>.
+    </p>
+  </main>
+
+  <script type="module" src="js/brand.js"></script>
+  <script type="module" src="js/historia.js"></script>
+</body>
+</html>

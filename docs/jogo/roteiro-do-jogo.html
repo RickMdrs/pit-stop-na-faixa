@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Roteiro do jogo — Pit Stop na Faixa</title>
+<style>
+  @font-face { font-family: 'Inter'; font-weight: 400; src: url('../../public/vendor/fonts/inter-400.woff2') format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 600; src: url('../../public/vendor/fonts/inter-600.woff2') format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 700; src: url('../../public/vendor/fonts/inter-700.woff2') format('woff2'); }
+  @page { size: A4; margin: 16mm 16mm 14mm; }
+  * { box-sizing: border-box; }
+  body { font: 400 10.5pt/1.5 Inter, 'Segoe UI', Arial, sans-serif; color: #1c2330; margin: 0; }
+  h1 { font-size: 21pt; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 2mm; color: #0f1b33; }
+  h2 { font-size: 13pt; font-weight: 700; margin: 6mm 0 2mm; color: #1b4f9c; display: flex; align-items: center; gap: 2.5mm; }
+  h2 .n { display: inline-grid; place-items: center; width: 7mm; height: 7mm; border-radius: 50%; background: #1b4f9c; color: #fff; font-size: 10pt; }
+  p { margin: 0 0 2.5mm; }
+  .lead { font-size: 11.5pt; color: #3a4456; margin-bottom: 4mm; }
+  .box { border: 1px solid #d8dee8; border-radius: 3mm; padding: 3.5mm 4.5mm; margin: 3mm 0; background: #f7f9fc; }
+  .box.warn { border-color: #f1c27a; background: #fff8ec; }
+  .box.ok { border-color: #a9d8b8; background: #f1faf4; }
+  table { width: 100%; border-collapse: collapse; margin: 2mm 0 3mm; font-size: 10pt; }
+  th, td { text-align: left; padding: 2mm 2.5mm; border-bottom: 1px solid #e3e8ef; vertical-align: top; }
+  th { font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.06em; color: #5b6475; font-weight: 600; }
+  ol, ul { margin: 0 0 2.5mm; padding-left: 5.5mm; }
+  li { margin: 0.8mm 0; }
+  .signs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; margin: 2mm 0 3mm; }
+  .signs figure { margin: 0; }
+  .signs img { width: 100%; border-radius: 2mm; display: block; }
+  .signs figcaption { font-size: 8.8pt; color: #3a4456; margin-top: 1.5mm; line-height: 1.35; }
+  .tag { display: inline-block; font-size: 8pt; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #1b4f9c; }
+  .page-break { break-before: page; }
+  .foot { margin-top: 5mm; font-size: 8.8pt; color: #6b7486; border-top: 1px solid #e3e8ef; padding-top: 2.5mm; }
+  b { font-weight: 600; color: #0f1b33; }
+</style>
+</head>
+<body>
+
+<span class="tag">Pit Stop na Faixa · Hackathon Equatorial</span>
+<h1>O jogo: o que ele precisa fazer</h1>
+<p class="lead">A ideia é simples: primeiro a pessoa <b>sente na pele</b> como é atravessar sem ajuda e sem cuidado.
+Depois ela joga de novo <b>com o Pit Stop na Faixa</b> e aprende o jeito certo. O jogo tem duas partes e cabe em uns 3 minutos.</p>
+
+<h2><span class="n">1</span> Parte 1 — "Sem ajuda"</h2>
+<p>O boneco sai do corredor entre os prédios e precisa atravessar a rua. <b>Não há sinal nenhum.</b>
+Do corredor, ele não enxerga os carros — e os carros não enxergam ele (é exatamente o que acontece no local).</p>
+<p><b>Como se perde:</b> se o jogador atravessar sem olhar para os dois lados, ou na hora errada, acontece o acidente e a fase recomeça.</p>
+<div class="box warn">
+  <b>Sem sangue, sem cena pesada.</b> No acidente: tela escurece, freada, e uma frase curta que ensina —
+  <i>"Você saiu do corredor sem olhar. O motorista não teve tempo de te ver."</i>
+</div>
+
+<table>
+  <tr><th style="width:22%">Nível</th><th>O que muda</th><th style="width:34%">O que a pessoa aprende</th></tr>
+  <tr><td><b>1 · Calmo</b></td><td>Poucos carros, devagar, só de um lado.</td><td>Parar antes de entrar na rua.</td></tr>
+  <tr><td><b>2 · Mão dupla</b></td><td>Carros dos dois lados.</td><td>Olhar para os <b>dois</b> lados, sempre.</td></tr>
+  <tr><td><b>3 · Visão tapada</b></td><td>Carros estacionados escondem quem vem; mais movimento.</td><td>Da saída do corredor não dá para ver tudo — é perigoso mesmo com cuidado.</td></tr>
+</table>
+<p>O nível 3 é de propósito difícil: ele mostra que <b>o problema não é só da pessoa</b>, é do lugar. É a deixa para a Parte 2.</p>
+
+<h2><span class="n">2</span> Parte 2 — "Com o Pit Stop na Faixa"</h2>
+<p>Mesma rua, mesmo corredor — agora com a nossa solução. Aparecem na tela: a <b>área de espera</b> pintada no fim do corredor
+(com "PARE · OLHE" no chão), um <b>sinal para cada sentido</b> da rua e uma <b>telinha</b> para o pedestre.</p>
+
+<p><b>O que o boneco deve fazer, em ordem:</b></p>
+<ol>
+  <li><b>Andar até a área de espera e parar.</b> Enquanto ele ainda está no corredor, o sinal já avisa os motoristas que alguém vem vindo.</li>
+  <li><b>Pedir passagem:</b> segurar a tecla da mão (meio segundo) — ou só ficar parado na área, ou apertar o botão.</li>
+  <li><b>Olhar para os dois lados</b> e esperar os carros pararem.</li>
+  <li><b>Atravessar</b> só com os carros parados. Na faixa, o sinal fica vermelho até ele chegar do outro lado.</li>
+</ol>
+
+<div class="page-break"></div>
+
+<p><b>Os sinais que o motorista vê</b> (use estas imagens; estão em <code>docs/sinalizacao/jogo/</code>):</p>
+<div class="signs">
+  <figure><img src="../sinalizacao/jogo/sinal-aproximacao.png" alt=""><figcaption><b>Boneco no corredor</b><br>Atenção: alguém está chegando.</figcaption></figure>
+  <figure><img src="../sinalizacao/jogo/sinal-pedido.png" alt=""><figcaption><b>Boneco pediu passagem</b><br>O motorista deve parar antes da faixa.</figcaption></figure>
+  <figure><img src="../sinalizacao/jogo/sinal-faixa.png" alt=""><figcaption><b>Boneco na faixa</b><br>Alerta máximo: pisca rápido, vermelho.</figcaption></figure>
+</div>
+
+<p><b>A telinha do pedestre</b> mostra, na ordem: <i>"Pare na área marcada"</i> → <i>"Pedido recebido! Motoristas avisados"</i> →
+<i>"ATRAVESSE QUANDO OS VEÍCULOS PARAREM"</i> → <i>"Atravessando: continue atento"</i>.</p>
+
+<div class="box">
+  <b>O caso surpresa (muito importante):</b> em uma das rodadas, mesmo com o sinal aceso, <b>um carro não para</b>.
+  Quem atravessou só porque o sinal acendeu, perde. Quem olhou e esperou, passa.
+  É isso que ensina a lição principal: <b>o sinal avisa o motorista, mas quem decide a hora de atravessar é você, olhando.</b>
+</div>
+
+<h2><span class="n">3</span> Regras de ouro</h2>
+<ul>
+  <li><b>Nunca usar verde nem "pode atravessar"</b> para o pedestre. O jogo não pode ensinar que o sinal libera a passagem.</li>
+  <li><b>Pontuar decisões certas, não velocidade.</b> Sem cronômetro apertado: esperar é a jogada certa.</li>
+  <li><b>Usar os mesmos textos e cores do sistema</b> (âmbar = atenção/pedido, vermelho = pessoa na faixa). Quem jogar e depois vir a faixa de verdade vai reconhecer tudo.</li>
+  <li><b>Dá para jogar só com o teclado</b> (andar, segurar a mão, olhar). Câmera é extra, se sobrar tempo.</li>
+</ul>
+
+<h2><span class="n">4</span> Final do jogo</h2>
+<p>Uma tela curta com o resumo: <i>"Pare na área. Peça passagem. Olhe para os dois lados. Atravesse quando os carros pararem.
+O sinal ajuda — mas quem confirma é você."</i> Mostrar quantas decisões certas a pessoa tomou (sem ranking de tempo).</p>
+
+<div class="box ok">
+  <b>Material pronto para usar:</b> cenário de cima, sinais em cada estado e as coordenadas de tudo (zonas, pistas, onde os carros param)
+  estão em <code>docs/sinalizacao/</code> — veja o <code>LEIA-ME.md</code> de lá. O mesmo desenho aparece na apresentação (modo história),
+  então jogo e apresentação ficam iguais.
+</div>
+
+<p class="foot">Pit Stop na Faixa · roteiro do jogo educativo · versão de 18/10/2026. Conteúdo a validar com a equipe de segurança da unidade.</p>
+</body>
+</html>

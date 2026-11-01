@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" width="640" height="300" font-family="Inter, 'Segoe UI', Arial, sans-serif">
+<defs><symbol id="pp" viewBox="0 0 64 64"><circle cx="34" cy="10" r="6" fill="currentColor"/><path d="M30 19h8l6 14-5 2-4-8-2 10 8 10v15h-6V49l-7-8-3 9-8 12-5-3 8-12 4-14 1-9-5 4v8h-5V24z" fill="currentColor"/></symbol></defs>
+<rect width="640" height="300" rx="24" fill="#000"/>
+<rect x="210" y="26" width="96" height="48" rx="8" fill="#f5a524" stroke="#fde68a" stroke-width="3"/>
+<rect x="334" y="26" width="96" height="48" rx="8" fill="#2a2207" stroke="#3b3210" stroke-width="3"/>
+<rect x="28" y="102" width="584" height="172" rx="18" fill="#000" stroke="#f5a524" stroke-width="5"/>
+<use href="#pp" x="56" y="132" width="112" height="112" color="#f5a524"/>
+<text x="190" y="182" font-size="27" font-weight="700" fill="#f5a524">PEDESTRE PEDIU PASSAGEM</text>
+<text x="190" y="228" font-size="26" font-weight="600" fill="#f5a524">PARE ANTES DA FAIXA</text>
+</svg>

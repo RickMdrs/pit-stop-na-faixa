@@ -1,0 +1,197 @@
+/* =========================================================================
+   Pit Stop na Faixa — design system base (compartilhado por todas as telas)
+   Estilo: escuro minimalista (OLED), linhas finas, tipografia Inter.
+   Marca: azul Equatorial. Status: âmbar (atenção), vermelho (faixa/falha).
+   Tudo local (fonte e ícones em /vendor) — funciona sem internet.
+   ========================================================================= */
+
+@font-face { font-family: 'Inter'; font-weight: 300; font-style: normal; font-display: swap; src: url('../vendor/fonts/inter-300.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 400; font-style: normal; font-display: swap; src: url('../vendor/fonts/inter-400.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 500; font-style: normal; font-display: swap; src: url('../vendor/fonts/inter-500.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 600; font-style: normal; font-display: swap; src: url('../vendor/fonts/inter-600.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-weight: 700; font-style: normal; font-display: swap; src: url('../vendor/fonts/inter-700.woff2') format('woff2'); }
+
+:root {
+  color-scheme: dark;
+
+  /* superfícies */
+  --bg: #050607;
+  --surface: #0c0e11;
+  --surface-2: #13161b;
+  --surface-3: #1a1e25;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-2: rgba(255, 255, 255, 0.14);
+  --line-3: rgba(255, 255, 255, 0.24);
+
+  /* texto (contraste sobre --surface: text 17:1, text-2 8:1, text-3 4.6:1) */
+  --text: #f3f5f8;
+  --text-2: #aab2bf;
+  --text-3: #7d8694;
+
+  /* marca Equatorial */
+  --brand: #1b4f9c;        /* azul institucional */
+  --brand-2: #3d7bea;      /* azul para interação sobre fundo escuro */
+  --brand-soft: rgba(61, 123, 234, 0.14);
+
+  /* status */
+  --amber: #f5a524;
+  --amber-soft: rgba(245, 165, 36, 0.14);
+  --red: #ef4444;
+  --red-soft: rgba(239, 68, 68, 0.14);
+  --green: #22c55e;
+  --green-soft: rgba(34, 197, 94, 0.12);
+  --violet: #c4a5ff;       /* origem "foto de teste" */
+
+  /* zonas */
+  --zone-a: #5b8def;
+  --zone-b: #f5a524;
+  --zone-c: #ef4444;
+
+  /* forma e ritmo (8px) */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --t-fast: 150ms;
+  --t-med: 240ms;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 14px/1.5 var(--font);
+  font-feature-settings: 'cv11', 'ss01', 'tnum';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3 { margin: 0; font-weight: 400; letter-spacing: -0.02em; }
+p { margin: 0; }
+a { color: inherit; }
+
+/* rótulo pequeno em caixa alta — usado em toda a interface */
+.label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.muted { color: var(--text-2); }
+.dim { color: var(--text-3); }
+.small { font-size: 12px; }
+.mono { font-variant-numeric: tabular-nums; }
+
+/* ---------- ícones (sprite Lucide) ---------- */
+.i {
+  width: 18px; height: 18px; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 1.5;
+  stroke-linecap: round; stroke-linejoin: round;
+  vertical-align: middle;
+}
+.i-sm { width: 14px; height: 14px; }
+.i-lg { width: 24px; height: 24px; }
+.i-xl { width: 32px; height: 32px; stroke-width: 1.25; }
+
+/* ---------- botões ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
+  min-height: 40px; padding: 0 var(--s-4);
+  font: 500 13px/1 var(--font); letter-spacing: 0.01em; color: var(--text);
+  background: transparent; border: 1px solid var(--line-2); border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.btn:hover { border-color: var(--line-3); background: rgba(255, 255, 255, 0.04); }
+.btn:active { background: rgba(255, 255, 255, 0.08); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-primary { background: var(--text); color: #050607; border-color: var(--text); }
+.btn-primary:hover { background: #ffffff; border-color: #ffffff; }
+.btn-brand { background: var(--brand-2); color: #fff; border-color: var(--brand-2); }
+.btn-brand:hover { background: #5590f2; border-color: #5590f2; }
+.btn-ghost { border-color: transparent; color: var(--text-2); }
+.btn-ghost:hover { color: var(--text); background: rgba(255, 255, 255, 0.05); border-color: transparent; }
+.btn-lg { min-height: 52px; padding: 0 var(--s-5); font-size: 15px; }
+
+/* botão redondo branco (CTA principal, como na referência) */
+.btn-round {
+  width: 72px; height: 72px; padding: 0; border-radius: 50%;
+  background: var(--text); color: #050607; border: none;
+  font: 600 11px/1.1 var(--font); letter-spacing: 0.08em; text-transform: uppercase;
+  display: inline-grid; place-items: center; cursor: pointer;
+  transition: transform var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.btn-round:hover { background: #fff; transform: scale(1.04); }
+.btn-round:active { transform: scale(0.98); }
+
+/* segmentado */
+.seg-group { display: inline-flex; padding: 3px; gap: 2px; border: 1px solid var(--line-2); border-radius: 999px; }
+.seg {
+  min-height: 32px; padding: 0 var(--s-3); border: none; border-radius: 999px; background: transparent;
+  color: var(--text-2); font: 500 12px/1 var(--font); cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.seg:hover { color: var(--text); }
+.seg.active { background: var(--surface-3); color: var(--text); box-shadow: inset 0 0 0 1px var(--line-2); }
+
+/* ---------- formulários (linha inferior, como na referência) ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field > .label { margin-bottom: 0; }
+select, input[type="text"], input[type="number"] {
+  font: 400 14px/1.2 var(--font); color: var(--text);
+  background: transparent; border: none; border-bottom: 1px solid var(--line-2); border-radius: 0;
+  padding: 8px 0; min-height: 36px; width: 100%;
+  transition: border-color var(--t-fast) var(--ease);
+}
+select { cursor: pointer; padding-right: 18px; appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-3) 50%), linear-gradient(135deg, var(--text-3) 50%, transparent 50%);
+  background-position: calc(100% - 9px) 55%, calc(100% - 4px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
+select option { background: var(--surface-2); color: var(--text); }
+select:hover, input[type="text"]:hover, input[type="number"]:hover { border-bottom-color: var(--line-3); }
+select:focus, input:focus { outline: none; border-bottom-color: var(--brand-2); }
+input[type="file"] { font: 400 12px var(--font); color: var(--text-2); }
+input[type="file"]::file-selector-button {
+  font: 500 12px var(--font); color: var(--text); background: transparent; border: 1px solid var(--line-2);
+  border-radius: 999px; padding: 6px 12px; margin-right: 10px; cursor: pointer;
+}
+input[type="checkbox"], input[type="radio"] {
+  appearance: none; width: 16px; height: 16px; margin: 0; flex: none; cursor: pointer;
+  border: 1px solid var(--line-3); border-radius: 50%; display: inline-grid; place-items: center;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+input[type="checkbox"]::after, input[type="radio"]::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: transparent; }
+input[type="checkbox"]:checked, input[type="radio"]:checked { border-color: var(--brand-2); background: var(--brand-soft); }
+input[type="checkbox"]:checked::after, input[type="radio"]:checked::after { background: var(--brand-2); }
+.check { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-2); font-size: 13px; }
+.check:hover { color: var(--text); }
+
+:focus-visible { outline: 2px solid var(--brand-2); outline-offset: 2px; }
+
+/* ---------- etiquetas de status ---------- */
+.tag {
+  display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px;
+  border: 1px solid var(--line-2); border-radius: 999px;
+  font: 500 11px/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); white-space: nowrap;
+}
+.tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* ---------- marca ---------- */
+.brand { display: inline-flex; align-items: center; gap: var(--s-3); text-decoration: none; }
+.brand img { height: 22px; width: auto; display: block; }
+.brand .wordmark { font: 600 15px/1 var(--font); letter-spacing: -0.01em; }
+.brand .divider { width: 1px; height: 18px; background: var(--line-2); }
+.brand .product { font: 400 13px/1 var(--font); color: var(--text-2); }
+/* logo oficial na versão colorida: exibida sobre placa branca (sem recolorir a marca) */
+.brand img.plate { background: #fff; padding: 5px 9px; border-radius: 6px; height: 30px; }
+
+/* Obs.: "reduzir animações" fica nas folhas de cada tela, NÃO aqui —
+   o pisca do sinal ao motorista é funcional e não pode ser desligado. */
